@@ -72,7 +72,16 @@ def build_model():
     ('tfidf', TfidfTransformer()),
     ('clf', MultiOutputClassifier(RandomForestClassifier()))
     ])
-    return pipeline
+    
+     parameters = {
+              'tfidf__use_idf':[True,False],
+              'tfidf__smooth_idf':[True,False],
+              'tfidf__sublinear_tf':[True,False],
+              }
+
+    cv = GridSearchCV(pipeline, param_grid=parameters)
+    
+    return cv
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
