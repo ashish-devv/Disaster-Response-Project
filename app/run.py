@@ -7,7 +7,7 @@ from nltk.tokenize import word_tokenize
 
 from flask import Flask
 from flask import render_template, request, jsonify
-from plotly.graph_objs import Bar
+from plotly.graph_objs import Bar,Scatter
 from sklearn.externals import joblib
 from sqlalchemy import create_engine
 
@@ -43,6 +43,27 @@ def index():
     genre_counts = df.groupby('genre').count()['message']
     genre_names = list(genre_counts.index)
     
+    news_counts = df[df['genre']=='news'][['related', 'request', 'offer',
+       'aid_related', 'medical_help', 'medical_products', 'search_and_rescue',
+       'security', 'military', 'child_alone', 'water', 'food', 'shelter',
+       'clothing', 'money', 'missing_people', 'refugees', 'death', 'other_aid',
+       'infrastructure_related', 'transport', 'buildings', 'electricity',
+       'tools', 'hospitals', 'shops', 'aid_centers', 'other_infrastructure',
+       'weather_related', 'floods', 'storm', 'fire', 'earthquake', 'cold',
+       'other_weather', 'direct_report']].sum()
+    news_help = ['related', 'request', 'offer',
+       'aid_related', 'medical_help', 'medical_products', 'search_and_rescue',
+       'security', 'military', 'child_alone', 'water', 'food', 'shelter',
+       'clothing', 'money', 'missing_people', 'refugees', 'death', 'other_aid',
+       'infrastructure_related', 'transport', 'buildings', 'electricity',
+       'tools', 'hospitals', 'shops', 'aid_centers', 'other_infrastructure',
+       'weather_related', 'floods', 'storm', 'fire', 'earthquake', 'cold',
+       'other_weather', 'direct_report']
+    
+    social_counts = df[df['genre']=='social'][['request','aid_related','medical_help','water', 'food', 'shelter',
+       'clothing', 'money','other_aid','infrastructure_related', 'transport']].sum()
+    social_name = ['request','aid_related','medical_help','water', 'food', 'shelter',
+       'clothing', 'money','other_aid','infrastructure_related', 'transport']
     # create visuals
     # TODO: Below is an example - modify to create your own visuals
     graphs = [
@@ -56,6 +77,41 @@ def index():
 
             'layout': {
                 'title': 'Distribution of Message Genres',
+                'yaxis': {
+                    'title': "Count"
+                },
+                'xaxis': {
+                    'title': "Genre"
+                }
+            }
+        }, {
+            'data': [
+                Bar(
+                    x=news_help,
+                    y=news_counts
+                )
+            ],
+
+            'layout': {
+                'title': 'How many messages from news are for help',
+                'yaxis': {
+                    'title': "Count"
+                },
+                'xaxis': {
+                    'title': "Genre"
+                }
+            }
+        },
+         {
+            'data': [
+                Bar(
+                    x=social_name,
+                    y=social_counts
+                )
+            ],
+
+            'layout': {
+                'title': 'Asked for help through social media',
                 'yaxis': {
                     'title': "Count"
                 },
